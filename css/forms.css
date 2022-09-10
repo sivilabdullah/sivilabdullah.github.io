@@ -8,7 +8,7 @@ body {
 	font-family:'Pacifico',cursive;
 	margin: 0;
 	padding: 0;
-	background-image: url(/begin/img/galaxy.jpg);
+	background-image: url("../img/galaxy.jpg");
 	
 }
 .wrapper {
