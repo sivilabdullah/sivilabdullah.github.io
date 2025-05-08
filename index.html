@@ -1,110 +1,1253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Alien Abduction Order Form</title>
-	<link href="css/forms.css" rel="stylesheet">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeMaster AI | Smarter Crypto Trading, Automatically</title>
+    <meta name="description" content="Advanced AI-powered crypto trading bot with position reversal logic, real-time execution, and intelligent risk management.">
+    <meta name="keywords" content="crypto trading bot, automated trading, bitcoin trading, AI trading, cryptocurrency, position reversal, algorithmic trading">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Schema.org markup for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "TradeMaster AI",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web-based",
+        "description": "Advanced AI-powered crypto trading bot with position reversal logic, real-time execution, and intelligent risk management.",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "http://schema.org/ComingSoon"
+        }
+    }
+    </script>
+    
+    <!-- Live Reload for Development -->
+    <script>
+        // Only enable LiveReload in development environment
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + 
+            ':35729/livereload.js?snipver=1"></' + 'script>');
+        }
+    </script>
+    <style>
+        /* Header-specific styles */
+        .premium-header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: rgba(24, 24, 32, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .premium-header.scrolled {
+            background: rgba(24, 24, 32, 0.95);
+        }
+        
+        .premium-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+        }
+        
+        .premium-logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .premium-logo img {
+            height: 38px;
+            filter: brightness(1.2);
+        }
+        
+        .premium-nav-links {
+            display: flex;
+            gap: 36px;
+        }
+        
+        .premium-nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            font-size: 1.6rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 6px 2px;
+        }
+        
+        .premium-nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .premium-nav-links a:hover,
+        .premium-nav-links a.active {
+            color: #fff;
+        }
+        
+        .premium-nav-links a:hover::after,
+        .premium-nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .premium-cta {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-cta .button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #ff8700 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(247, 147, 26, 0.2);
+            font-size: 1.5rem;
+            padding: 10px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .premium-cta .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(247, 147, 26, 0.3);
+        }
+        
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            position: relative;
+            z-index: 1001;
+        }
+        
+        .toggle-bar {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background-color: #fff;
+            border-radius: 2px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-bar:first-child {
+            transform: translate(-50%, -8px);
+        }
+        
+        .toggle-bar:last-child {
+            transform: translate(-50%, 6px);
+        }
+        
+        .mobile-toggle.active .toggle-bar:first-child {
+            transform: translate(-50%, 0) rotate(45deg);
+        }
+        
+        .mobile-toggle.active .toggle-bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-toggle.active .toggle-bar:last-child {
+            transform: translate(-50%, 0) rotate(-45deg);
+        }
+        
+        .premium-mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(20, 20, 28, 0.98);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .premium-mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .premium-mobile-links {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            text-align: center;
+        }
+        
+        .premium-mobile-links a {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 2.4rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .premium-mobile-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .premium-mobile-cta {
+            margin-top: 40px;
+        }
+        
+        .header-badge {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 4px 12px;
+            margin-left: 16px;
+            font-size: 1.3rem;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 8px;
+            position: relative;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(247, 147, 26, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(247, 147, 26, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(247, 147, 26, 0);
+            }
+        }
+        
+        .premium-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .premium-dark-mode {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .premium-dark-mode:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .premium-dark-mode.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        
+        .premium-dark-mode svg {
+            transition: transform 0.5s ease;
+        }
+        
+        .premium-dark-mode:hover svg {
+            transform: rotate(30deg);
+        }
+        
+        @media (max-width: 992px) {
+            .premium-nav-links {
+                display: none;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .premium-cta {
+                display: none;
+            }
+            
+            .premium-dark-mode {
+                margin-right: 16px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .premium-dark-mode {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .premium-dark-mode svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-	<div class="wrapper">
-		<section>
-			<h1>Alien Abduction Order Form</h1>
+    <!-- Premium Header -->
+    <header class="premium-header">
+        <div class="container">
+            <nav class="premium-nav">
+                <div class="premium-logo">
+                    <a href="#" class="site-logo">
+                        <div class="logo-icon"></div>
+                        <div class="logo-text">Trade<span class="highlight">Master</span></div>
+                        <span class="beta-badge">BETA</span>
+                    </a>
+                </div>
+                
+                <div class="premium-nav-links">
+                    <a href="#features" class="active">Features</a>
+                    <a href="#about">About</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                
+                <div class="premium-actions">
+                    <button class="premium-dark-mode" aria-label="Toggle dark mode">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <div class="premium-cta">
+                        <a href="#waitlist" class="button primary">Start Trading <span>→</span></a>
+                    </div>
+                </div>
+                
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span class="toggle-bar"></span>
+                    <span class="toggle-bar"></span>
+                    <span class="toggle-bar"></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Premium Mobile Menu -->
+    <div class="premium-mobile-menu">
+        <div class="premium-mobile-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#testimonials">Testimonials</a>
+            <a href="#faq">FAQ</a>
+            </div>
+        <div class="premium-mobile-cta">
+            <a href="#waitlist" class="button primary">Start Trading <span>→</span></a>
+        </div>
+    </div>
 
-			<p>Fill out the form below to place an order for an alien abduction by one of our fine UFOs.</p>
-	
-				<form action="https://e3vwdl4bpd.execute-api.us-west-2.amazonaws.com/default/API2SES
-				  " method="POST">
-				<input type="hidden" name="send_to" value="anatousis@protonmail.com">
-					<fieldset>
-								<legend>Your contact information</legend>
-							
-							<!--name-->
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg">
+            <div class="animated-gradient"></div>
+            <div class="animated-grid"></div>
+            <div class="crypto-particles"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content-wrapper">
+            <div class="hero-content">
+                    <div class="hero-badge reveal-element">
+                        <span class="pulse-dot"></span>
+                        <span>AI-Powered Trading</span>
+                    </div>
+                    
+                    <h1 class="reveal-text">Trade Smarter <span class="gradient-text">Not Harder</span> with AI Automation</h1>
+                    
+                    <p class="hero-subtitle reveal-text delay-1">
+                        Advanced position reversal, real-time execution, and risk management in one powerful crypto trading bot.
+                    </p>
+                    
+                    <div class="hero-stats reveal-element delay-2">
+                        <div class="stat-item">
+                            <div class="stat-icon profit-icon"></div>
+                            <div>
+                                <span class="stat-value counter" data-count="97">97</span><span class="stat-unit">%</span>
+                                <span class="stat-label">Win Rate</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon user-icon"></div>
+                            <div>
+                                <span class="stat-value counter" data-count="1500">1500</span><span class="stat-unit">+</span>
+                                <span class="stat-label">Active Users</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon trade-icon"></div>
+                            <div>
+                                <span class="stat-value counter" data-count="45000">45K</span><span class="stat-unit">+</span>
+                                <span class="stat-label">Trades Executed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-cta reveal-element delay-3">
+                        <a href="#waitlist" class="button button-primary">
+                            <span>Start Trading Now</span>
+                            <svg class="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#demo" class="button button-secondary">
+                            <svg class="play-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/>
+                                <path d="M14 10L8 6V14L14 10Z" fill="currentColor"/>
+                            </svg>
+                            <span>Watch Demo</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="dashboard-container reveal-element">
+                        <div class="dashboard-tabs">
+                            <div class="tab-item active">Trading</div>
+                            <div class="tab-item">Analytics</div>
+                            <div class="tab-item">Settings</div>
+                        </div>
+                        <div class="dashboard-content">
+                            <div class="dashboard-header">
+                                <div class="pair-selector">
+                                    <span class="selected-pair">BTC/USDT</span>
+                                    <span class="price-info">$61,245.32 <span class="price-change positive">+2.4%</span></span>
+                                </div>
+                                <div class="timeframe-selector">
+                                    <span class="timeframe active">1H</span>
+                                    <span class="timeframe">4H</span>
+                                    <span class="timeframe">1D</span>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="trading-chart"></canvas>
+                                <div class="chart-overlay">
+                                    <div class="trade-signal buy-signal">
+                                        <div class="signal-icon"></div>
+                                        <div class="signal-text">BUY</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dashboard-controls">
+                                <div class="trading-stats">
+                                    <div class="stat">
+                                        <span class="label">Position</span>
+                                        <span class="value">LONG</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">Entry</span>
+                                        <span class="value">$60,125</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">Target</span>
+                                        <span class="value">$63,750</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">Stop</span>
+                                        <span class="value">$59,450</span>
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="action-button">Auto</button>
+                                    <button class="action-button active">Trade</button>
+                                    <button class="action-button">Pause</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-cards">
+                        <div class="floating-card profit-card reveal-element delay-1">
+                            <div class="card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M2 12H5M5 12C5 16.4183 8.58172 20 13 20C17.4183 20 21 16.4183 21 12C21 7.58172 17.4183 4 13 4C10.4288 4 8.14378 5.0986 6.57538 6.81437M5 12V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13 8V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">+$1,248.33</div>
+                                <div class="card-label">Today's Profit</div>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-card alert-card reveal-element delay-2">
+                            <div class="card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 16V12M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">Position Opened</div>
+                                <div class="card-label">SOL/USDT • Long</div>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-card analysis-card reveal-element delay-3">
+                            <div class="card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M8 6V18M12 10V18M16 14V18M6 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">Market Analysis</div>
+                                <div class="card-label">Bullish trend detected</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="crypto-symbols">
+                        <div class="crypto-symbol btc-symbol"></div>
+                        <div class="crypto-symbol eth-symbol"></div>
+                        <div class="crypto-symbol sol-symbol"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-brands reveal-element delay-4">
+                <p>Integrated with top exchanges</p>
+                <div class="brands-logos">
+                    <div class="brand-logo"><img src="images/brands/binance.svg" alt="Binance"></div>
+                    <div class="brand-logo"><img src="images/brands/coinbase.svg" alt="Coinbase"></div>
+                    <div class="brand-logo"><img src="images/brands/ftx.svg" alt="FTX"></div>
+                    <div class="brand-logo"><img src="images/brands/kraken.svg" alt="Kraken"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Trade with Confidence</h2>
+                <p class="reveal-text delay-1">Our algorithmic trading bot combines advanced technical analysis, machine learning, and real-time market data processing to execute trades with precision and speed.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card reveal-element">
+                    <div class="about-icon">
+                        <img src="images/icons/ai-icon.svg" alt="AI-Powered">
+                    </div>
+                    <h3>AI-Powered</h3>
+                    <p>Continuously learning trading patterns that humans might miss.</p>
+                </div>
+                <div class="about-card reveal-element delay-1">
+                    <div class="about-icon">
+                        <img src="images/icons/secure-icon.svg" alt="Secure">
+                    </div>
+                    <h3>Secure</h3>
+                    <p>Your API keys never leave your machine. No direct access to your funds.</p>
+                </div>
+                <div class="about-card reveal-element delay-2">
+                    <div class="about-icon">
+                        <img src="images/icons/automated-icon.svg" alt="Fully Automated">
+                    </div>
+                    <h3>Fully Automated</h3>
+                    <p>Set your strategy and let the bot handle the execution, 24/7.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-							<label for="name"> Your name </label>
-								<input type="text" id="name" name="name" autofocus >
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Advanced Trading Features</h2>
+                <p class="reveal-text delay-1">Our cutting-edge technology delivers professional-grade trading capabilities</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card reveal-element">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 4L30 10L24 16L18 10L24 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M36 16L42 22L36 28L30 22L36 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 16L18 22L12 28L6 22L12 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 28L30 34L24 40L18 34L24 28Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 16V28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M36 28H30" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18 28H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Position Reversal Logic</h3>
+                    <p>Seamlessly reverse positions based on market signals without unnecessary closures, preserving capital and maximizing efficiency.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">40%</span>
+                            <span class="label">Fee Reduction</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card reveal-element delay-1">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 12V24L32 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Real-Time Risk Management</h3>
+                    <p>Dynamically adjust position sizes and stop losses based on market volatility and your personalized risk profile.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">24/7</span>
+                            <span class="label">Protection</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card reveal-element delay-2">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 16L24 4L44 16V36L24 48L4 36V16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 26C26.2091 26 28 24.2091 28 22C28 19.7909 26.2091 18 24 18C21.7909 18 20 19.7909 20 22C20 24.2091 21.7909 26 24 26Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M32 36C32 31.5817 28.4183 28 24 28C19.5817 28 16 31.5817 16 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Smart Take Profit System</h3>
+                    <p>Three-stage profit-taking strategy that secures gains while allowing successful trades to maximize potential returns.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">3X</span>
+                            <span class="label">Profit Optimization</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card reveal-element delay-3">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M36 8L32 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M44 20L36 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M44 32L36 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M36 44L32 37" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 48V40" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 44L16 37" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 32L12 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 20L12 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8L16 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 32C28.4183 32 32 28.4183 32 24C32 19.5817 28.4183 16 24 16C19.5817 16 16 19.5817 16 24C16 28.4183 19.5817 32 24 32Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Re-Entry Intelligence</h3>
+                    <p>Uses advanced market analysis to identify optimal re-entry points after profit taking, maximizing your trading capital efficiency.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">87%</span>
+                            <span class="label">Timing Accuracy</span>
+                        </div>
+                </div>
+            </div>
+            
+                <div class="feature-card reveal-element delay-4">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 36C6 33.7909 7.79086 32 10 32H38C40.2091 32 42 33.7909 42 36V40C42 42.2091 40.2091 44 38 44H10C7.79086 44 6 42.2091 6 40V36Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 20C6 17.7909 7.79086 16 10 16H38C40.2091 16 42 17.7909 42 20V24C42 26.2091 40.2091 28 38 28H10C7.79086 28 6 26.2091 6 24V20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 4C6 5.10457 6.89543 6 8 6C9.10457 6 10 5.10457 10 4C10 2.89543 9.10457 2 8 2C6.89543 2 6 2.89543 6 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 4C14 5.10457 14.8954 6 16 6C17.1046 6 18 5.10457 18 4C18 2.89543 17.1046 2 16 2C14.8954 2 14 2.89543 14 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 12C6 9.79086 7.79086 8 10 8H38C40.2091 8 42 9.79086 42 12V12C42 14.2091 40.2091 16 38 16H10C7.79086 16 6 14.2091 6 12V12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Multi-Asset Trading</h3>
+                    <p>Trade across multiple cryptocurrencies simultaneously to diversify risk and capitalize on various market opportunities.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">25+</span>
+                            <span class="label">Trading Pairs</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card reveal-element delay-5">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12L36 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 26L24 36L34 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 12V36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 22L24 12L34 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>AI Signal Detection</h3>
+                    <p>Proprietary AI algorithms detect market patterns and trading signals that human traders might miss, giving you a competitive edge.</p>
+                    <div class="feature-stats">
+                        <div class="stat">
+                            <span class="value">97%</span>
+                            <span class="label">Signal Accuracy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features-cta reveal-element delay-6">
+                <a href="#waitlist" class="button button-primary">
+                    <span>Get Early Access</span>
+                    <svg class="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                </div>
+                </div>
+    </section>
 
-							<!--Phone Number-->
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Real-Time Trading Simulation</h2>
+                <p class="reveal-text delay-1">See how TradeMaster AI performs in different market conditions</p>
+            </div>
+            
+            <div class="demo-container reveal-element">
+                <div class="demo-controls">
+                    <div class="scenario-control active" data-scenario="position-reversal">
+                        <div class="scenario-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 7L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 7L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="scenario-label">Position Reversal</div>
+                    </div>
+                    <div class="scenario-control" data-scenario="take-profit">
+                        <div class="scenario-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 3V21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 9L13 15L9 11L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 9H15V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="scenario-label">Take Profit</div>
+                    </div>
+                    <div class="scenario-control" data-scenario="re-entry">
+                        <div class="scenario-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4V9H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M4 9C6.38695 6.22422 9.86344 4.85421 13.4468 5.23079C17.0302 5.60737 20.1421 7.68242 21.6569 10.7186C23.1717 13.7547 22.9235 17.3385 21 20.1525C19.0766 22.9664 15.7239 24.5552 12.1133 24.3165C8.50262 24.0778 5.38466 22.04 3.87868 19.0039C2.3727 15.9677 2.62088 12.384 4.54418 9.57" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="scenario-label">Re-entry</div>
+                    </div>
+                </div>
+                
+                <div class="demo-content">
+                    <div class="demo-chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">BTC/USDT Trading Simulation</div>
+                            <div class="chart-info">
+                                <div class="chart-timeframe">1H Timeframe</div>
+                                <div class="chart-balance">Balance: $10,000</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="demo-chart"></canvas>
+                            <div class="chart-signals">
+                                <!-- Signals will be dynamically added here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-info">
+                        <div class="info-tabs">
+                            <div class="info-tab active" data-tab="actions">Trade Actions</div>
+                            <div class="info-tab" data-tab="statistics">Statistics</div>
+                        </div>
+                        
+                        <div class="info-content">
+                            <div class="info-panel actions-panel active">
+                                <div class="action-list">
+                                    <div class="action-item buy">
+                                        <div class="action-time">09:30:45</div>
+                                        <div class="action-description">
+                                            <div class="action-type">BUY</div>
+                                            <div class="action-details">Entry at $58,345 • 0.2 BTC</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item tp">
+                                        <div class="action-time">11:20:12</div>
+                                        <div class="action-description">
+                                            <div class="action-type">TAKE PROFIT</div>
+                                            <div class="action-details">Exit at $60,120 • +3.04%</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item system">
+                                        <div class="action-time">12:15:30</div>
+                                        <div class="action-description">
+                                            <div class="action-type">SYSTEM</div>
+                                            <div class="action-details">Detecting bearish pattern...</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item sell">
+                                        <div class="action-time">12:45:03</div>
+                                        <div class="action-description">
+                                            <div class="action-type">SELL</div>
+                                            <div class="action-details">Entry at $59,850 • 0.25 BTC</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-panel statistics-panel">
+                                <div class="stat-grid">
+                                    <div class="stat-item">
+                                        <div class="stat-label">Win Rate</div>
+                                        <div class="stat-value">92%</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">Avg. Profit</div>
+                                        <div class="stat-value">2.8%</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">Avg. Loss</div>
+                                        <div class="stat-value">0.7%</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-label">Profit Factor</div>
+                                        <div class="stat-value">3.5</div>
+                </div>
+            </div>
 
-								<label for="phone">Phone number</label>
-							<input type="tel" name="phone" id="phone">
-							<!--Email-->
+                                <div class="profit-chart">
+                                    <div class="profit-chart-title">Cumulative Profit</div>
+                                    <div class="profit-percent">+28.7%</div>
+                                    <div class="profit-graph">
+                                        <div class="profit-line"></div>
+                                    </div>
+                                    <div class="profit-time-period">Last 30 days</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-cta reveal-element delay-1">
+                    <a href="#waitlist" class="button button-primary">
+                        <span>Start Your Trading Journey</span>
+                        <svg class="button-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-							<label for="email">Email</label>
-							<input type="email" name="email" id="email">
-					</fieldset>
-					<fieldset>
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">How It Works</h2>
+                <p class="reveal-text delay-1">Simple setup, powerful execution</p>
+            </div>
+            
+            <div class="workflow">
+                <div class="workflow-step reveal-element">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Connect</h3>
+                        <p>Set up API connections to your preferred exchange using read-only API keys.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step reveal-element delay-1">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Configure</h3>
+                        <p>Set your risk parameters, trading pairs, and strategy preferences.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step reveal-element delay-2">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Launch</h3>
+                        <p>Start the bot and let it monitor markets 24/7, executing trades based on signals.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step reveal-element delay-3">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3>Monitor</h3>
+                        <p>Review performance metrics and adjust strategies as needed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Early Adopter Feedback</h2>
+                <p class="reveal-text delay-1">What our beta testers are saying</p>
+            </div>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card reveal-element">
+                    <div class="quote">"The position reversal feature alone has improved my trading efficiency by 40%. This bot thinks ahead of the market."</div>
+                    <div class="author">
+                        <img src="images/testimonials/user1.jpg" alt="Alex P.">
+                        <div class="author-info">
+                            <h4>Alex P.</h4>
+                            <p>Crypto Day Trader</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card reveal-element delay-1">
+                    <div class="quote">"I've tried many trading bots before, but this one's risk management is truly next level. My portfolio volatility decreased while returns increased."</div>
+                    <div class="author">
+                        <img src="images/testimonials/user2.jpg" alt="Sarah K.">
+                        <div class="author-info">
+                            <h4>Sarah K.</h4>
+                            <p>Portfolio Manager</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card reveal-element delay-2">
+                    <div class="quote">"The re-entry feature has been a game-changer. It waits for optimal moments after taking profits, which has dramatically improved my long-term performance."</div>
+                    <div class="author">
+                        <img src="images/testimonials/user3.jpg" alt="Michael R.">
+                        <div class="author-info">
+                            <h4>Michael R.</h4>
+                            <p>Algorithmic Trader</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-navigation">
+                <button class="nav-prev" aria-label="Previous testimonial">←</button>
+                <div class="nav-indicators">
+                    <span class="active"></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <button class="nav-next" aria-label="Next testimonial">→</button>
+            </div>
+        </div>
+    </section>
 
-					<legend>About your abduction </legend>
-					<!--Date-->
-					<label for="date" class="date">Requested  date</label>
-					<input type="date" name="date" id="date"><br>
-					<!--question-->
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Frequently Asked Questions</h2>
+                <p class="reveal-text delay-1">Get answers to the most common questions</p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item reveal-element">
+                    <div class="faq-question">
+                        <h3>What exchanges does TradeMaster AI support?</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>TradeMaster AI currently supports Binance Futures as the primary exchange. We're actively working on adding support for other major exchanges including Bybit, FTX, and Coinbase Pro in upcoming releases.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item reveal-element delay-1">
+                    <div class="faq-question">
+                        <h3>Does the bot have access to my funds?</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No. TradeMaster AI operates using read-only API keys and executes trades through your own exchange account. Your funds always remain in your exchange account, and your API keys never leave your machine.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item reveal-element delay-2">
+                    <div class="faq-question">
+                        <h3>What crypto pairs can I trade with TradeMaster AI?</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>TradeMaster AI supports all major cryptocurrency pairs available on Binance Futures, including BTC, ETH, BNB, SOL, ADA, and many others. You can easily configure which pairs you want to trade.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item reveal-element delay-3">
+                    <div class="faq-question">
+                        <h3>What is the minimum capital required to start?</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>While TradeMaster AI can work with any account size, we recommend starting with at least $1,000 to effectively use our position sizing algorithms and risk management features. The bot can also be run in paper trading mode to test strategies without risk.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item reveal-element delay-4">
+                    <div class="faq-question">
+                        <h3>How much does TradeMaster AI cost?</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>TradeMaster AI will be available in multiple pricing tiers, including a free tier with limited features. Full pricing details will be announced when we launch. Early waitlist members will receive special pricing and exclusive bonuses.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-					<label for="qty">How many people would you like abducted?</label>
-					<input type="number" name="qty" id="qty" min="1" max="10">
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="reveal-text">Pricing Plans</h2>
+                <p class="reveal-text delay-1">Choose the plan that fits your trading needs</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card starter reveal-element">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">0</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>3 Trading Pairs</li>
+                            <li>Basic Position Reversal</li>
+                            <li>Manual Re-entry</li>
+                            <li>Community Support</li>
+                            <li class="disabled">Smart Take Profit</li>
+                            <li class="disabled">Trend Analysis</li>
+                            <li class="disabled">Priority Support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="#waitlist" class="button secondary">Join Waitlist</a>
+                    </div>
+                </div>
+                
+                <div class="pricing-card pro reveal-element delay-1">
+                    <div class="most-popular">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">29</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>Unlimited Trading Pairs</li>
+                            <li>Advanced Position Reversal</li>
+                            <li>Smart Re-entry</li>
+                            <li>Smart Take Profit System</li>
+                            <li>Trend Analysis Integration</li>
+                            <li>Email Support</li>
+                            <li class="disabled">Priority Support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="#waitlist" class="button primary">Join Waitlist</a>
+                    </div>
+                </div>
+                
+                <div class="pricing-card premium reveal-element delay-2">
+                    <div class="pricing-header">
+                        <h3>Premium</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">79</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>Everything in Pro plan</li>
+                            <li>Custom Trading Strategies</li>
+                            <li>Multi-exchange Support</li>
+                            <li>Advanced Data Analytics</li>
+                            <li>Portfolio Optimization</li>
+                            <li>Priority Support</li>
+                            <li>1-on-1 Setup Assistance</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-cta">
+                        <a href="#waitlist" class="button secondary">Join Waitlist</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-					<!--radio button-->
-					<p>What type of UFO do you prefer?</p>
-							<label >
-								<input type="radio" name="ufotype" value="classic" checked>Classic oval UFO
-							</label>
-							<label>
-								<input type="radio" name="ufotype" value="starwars" >Star Wars-style Imperial cruiser
-							</label>
-							<label >
-								<input type="radio" name="ufotype" value="galactica">Battlestar Galactica-style Viper
-							</label>
-							<label>
-								<input type="radio" name="ufotype" value="startrek">Borg-style cube
-							</label>
+    <!-- Waitlist Section -->
+    <section id="waitlist" class="waitlist">
+        <div class="container">
+            <div class="waitlist-content">
+                <h2 class="reveal-text">Be Among the First</h2>
+                <p class="reveal-text delay-1">Join our exclusive waitlist for early access and special launch benefits.</p>
+                
+                <form class="waitlist-form reveal-element delay-2">
+                    <div class="form-group">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit" class="button primary">Join Waitlist</button>
+                    </div>
+                    <p class="privacy-note">We respect your privacy. No spam, ever.</p>
+                </form>
+            </div>
+        </div>
+    </section>
 
-							<!--list option-->
-					<label for="abtype">What type of abduction experience do you want?</label>
-						<select name="abtype" id="abtype">
-							<option disabled selected value> Select one..</option>
-							<option value="tour">Tour of the solar system</option>
-							<option value="dinner">Alien dinner and discussion</option>
-							<option value="dance">Alien dance lessons</option>
-							<option value="whale">Whale watching</option>
-					</select><br>
-					<br>
-							<!--request -->
-					<label for="comments">Special requests:</label>
-					<textarea name="comments" id="comments" cols="30" rows="5"></textarea>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#" class="site-logo">
+                        <div class="logo-icon"></div>
+                        <div class="logo-text">Trade<span class="highlight">Master</span></div>
+                    </a>
+                    <p>© 2025 TradeMaster AI. All rights reserved.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#pricing">Pricing</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Company</h4>
+                        <a href="#">About Us</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Careers</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Legal</h4>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Disclaimer</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Connect</h4>
+                        <div class="social-links">
+                            <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+                            <a href="#" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+                            <a href="#" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+                        </div>
+                        <a href="mailto:contact@trademasterai.com">contact@trademasterai.com</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="security-badges">
+                    <div class="security-badge">
+                        <img src="images/icons/security-verified.svg" alt="Security Verified">
+                        <span>256-bit Encryption</span>
+                    </div>
+                    <div class="security-badge">
+                        <img src="images/icons/api-secure.svg" alt="API Keys Secure">
+                        <span>API Keys Secure</span>
+                    </div>
+                </div>
+                <p class="disclaimer">Trading cryptocurrencies involves risk. Past performance does not guarantee future results. Only trade with funds you can afford to lose.</p>
+            </div>
+        </div>
+    </footer>
 
-					<label>
-						<input id="subscribe" name="subscribe" type="checkbox" value="subscribe">Add me to your email list
-					</label>
-					<button class="button" type="submit" role="button"><span class="text">Submit</span>
-						<span>Sure</span>
-					</button>
-			</fieldset>
-				
-		</form>				
-		
-		</section>
-		<aside>
-			<h3>Our Location</h3>
-			<iframe
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d82910.37073072344!2d12.33180492863003!3d51.32817756164306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig%2C%20Germany!5e0!3m2!1sen!2str!4v1662821609320!5m2!1sen!2str"
-				width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"></iframe>
-			<address>
-				Frontend Masters &middot;
-				60 South 6th Street &middot;
-				Suite 3625 &middot;
-				Minneapolis, MN 55402
-			</address>
-		</aside>
-	</div>
-	<script src="js/forms.js"></script>
+    <!-- JavaScript -->
+    <script src="js/vendor/intersection-observer.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script>
+        // Initialize Chart.js annotation support
+        Chart.annotationSupported = true;
+        
+        // Initialize FAQ toggles
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('.toggle-icon');
+                
+                question.addEventListener('click', () => {
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    
+                    // Update icon
+                    if (item.classList.contains('active')) {
+                        icon.textContent = '−';
+                    } else {
+                        icon.textContent = '+';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-

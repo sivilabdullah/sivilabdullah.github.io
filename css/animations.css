@@ -1,0 +1,506 @@
+/**
+ * TradeMaster AI - Animations CSS
+ * Contains animations, transitions, and visual effects
+ */
+
+/* ===== Animation Keyframes ===== */
+@keyframes float-1 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes float-2 {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-10px) translateX(5px); }
+    75% { transform: translateY(5px) translateX(-5px); }
+}
+
+@keyframes float-3 {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+    from { transform: translateX(-30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideLeft {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes rotateIn {
+    from { transform: rotate(-5deg) scale(0.9); opacity: 0; }
+    to { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(30px); }
+}
+
+@keyframes particleFloat {
+    0%, 100% { opacity: 0.3; transform: translateY(0) scale(1); }
+    50% { opacity: 0.7; transform: translateY(-20px) scale(1.2); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes priceUp {
+    0% { transform: translateY(0); color: inherit; }
+    50% { transform: translateY(-5px); color: #2ecc71; }
+    100% { transform: translateY(0); color: inherit; }
+}
+
+@keyframes priceDown {
+    0% { transform: translateY(0); color: inherit; }
+    50% { transform: translateY(5px); color: #e74c3c; }
+    100% { transform: translateY(0); color: inherit; }
+}
+
+/* ===== Reveal Animations ===== */
+.reveal-hidden {
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), 
+                opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-text.reveal-hidden {
+    transform: translateY(30px);
+}
+
+.reveal-element.reveal-hidden {
+    transform: translateY(40px);
+}
+
+.reveal-image.reveal-hidden {
+    transform: translateY(30px) scale(0.95);
+}
+
+.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* Delay classes */
+.delay-1 {
+    transition-delay: 0.2s;
+}
+
+.delay-2 {
+    transition-delay: 0.4s;
+}
+
+.delay-3 {
+    transition-delay: 0.6s;
+}
+
+.delay-4 {
+    transition-delay: 0.8s;
+}
+
+/* ===== Hero Section Animations ===== */
+.hero-section {
+    position: relative;
+}
+
+/* Animated Background Elements */
+.animated-gradient {
+    animation: gradientShift 15s ease infinite;
+    background-size: 200% 200%;
+}
+
+.animated-grid {
+    animation: gridMove 10s linear infinite;
+}
+
+.crypto-particles:before, 
+.crypto-particles:after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(247, 147, 26, 0.3);
+    animation: particleFloat 8s ease-in-out infinite;
+}
+
+.crypto-particles:before {
+    top: 20%;
+    left: 30%;
+    animation-delay: 1s;
+}
+
+.crypto-particles:after {
+    bottom: 40%;
+    right: 20%;
+    animation-delay: 2s;
+    background-color: rgba(98, 126, 234, 0.3);
+}
+
+/* Additional crypto particles for visual effect */
+.crypto-particles {
+    overflow: hidden;
+}
+
+.crypto-particles:before {
+    box-shadow: 
+        120px 50px 0 -2px rgba(247, 147, 26, 0.2),
+        200px 150px 0 -1px rgba(98, 126, 234, 0.2),
+        50px 200px 0 0 rgba(247, 147, 26, 0.15),
+        250px 50px 0 -2px rgba(98, 126, 234, 0.2),
+        300px 300px 0 -1px rgba(247, 147, 26, 0.1);
+}
+
+.crypto-particle {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(247, 147, 26, 0.3);
+    animation: particleFloat 8s ease-in-out infinite;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+.crypto-particle:nth-child(even) {
+    background-color: rgba(98, 126, 234, 0.3);
+    animation-duration: 10s;
+}
+
+.crypto-particle:nth-child(3n) {
+    background-color: rgba(46, 204, 113, 0.3);
+    animation-duration: 12s;
+}
+
+/* Floating elements animation delay */
+.profit-card {
+    animation-delay: 0.5s;
+}
+
+.alert-card {
+    animation-delay: 1s;
+}
+
+.analysis-card {
+    animation-delay: 1.5s;
+}
+
+/* Crypto symbols animation */
+.btc-symbol {
+    animation-delay: 0.2s;
+}
+
+.eth-symbol {
+    animation-delay: 1.2s;
+}
+
+.sol-symbol {
+    animation-delay: 2.1s;
+}
+
+/* Trading dashboard animations */
+.price-change.positive {
+    animation: priceUp 3s ease-in-out infinite;
+}
+
+.price-change.negative {
+    animation: priceDown 3s ease-in-out infinite;
+}
+
+.trade-signal .signal-icon {
+    animation: blink 2s infinite;
+}
+
+.timeframe.active {
+    position: relative;
+    overflow: hidden;
+}
+
+.timeframe.active:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Chart animation */
+#trading-chart {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards 0.5s;
+}
+
+/* ===== UI Effects ===== */
+.button {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+    transform: translateY(1px);
+}
+
+/* ===== Hover effects on cards ===== */
+.about-card, .testimonial-card, .workflow-step {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.about-card:hover, .testimonial-card:hover, .workflow-step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Scroll Progress Bar ===== */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #f7931a, #ff5e57);
+    z-index: 999;
+}
+
+/* ===== Scroll to Top Button ===== */
+.scroll-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #f7931a;
+    color: white;
+    font-size: 24px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 99;
+}
+
+.scroll-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-top:hover {
+    background: #ff9f43;
+}
+
+/* ===== Dark Mode Toggle ===== */
+.dark-mode-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme styles */
+body.dark-theme {
+    --bg-color: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-color: #f5f5f5;
+    --text-secondary: #b3b3b3;
+    --accent-color: #f7931a;
+    --card-bg: #252525;
+    --border-color: #333;
+}
+
+body.dark-theme .button.primary {
+    background-color: #f7931a;
+}
+
+body.dark-theme .about-card,
+body.dark-theme .testimonial-card,
+body.dark-theme .workflow-step {
+    background-color: var(--card-bg);
+}
+
+body.dark-theme .stat-item {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Stats Section Animation */
+.stats-section {
+    background: linear-gradient(to right, rgba(247, 147, 26, 0.05), rgba(255, 159, 67, 0.05));
+    padding: var(--spacing-xl) 0;
+    margin: var(--spacing-xl) 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3.6rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 1.6rem;
+    color: var(--text-secondary);
+}
+
+/* Waitlist form animations */
+.waitlist-form {
+    transition: height 0.3s ease;
+}
+
+.success-message {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: #2ecc71;
+    font-weight: 500;
+    animation: fadeIn 0.5s ease;
+}
+
+.referral-option {
+    margin-top: var(--spacing-md);
+    animation: slideUp 0.5s ease;
+}
+
+.share-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.share-buttons a {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 4px;
+    font-size: 1.4rem;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.twitter-share {
+    background: #1da1f2;
+    color: white;
+}
+
+.linkedin-share {
+    background: #0077b5;
+    color: white;
+}
+
+/* Error animation */
+.error-message {
+    color: #e74c3c;
+    font-size: 1.4rem;
+    margin-top: var(--spacing-xs);
+    animation: shake 0.5s ease;
+}
+
+input.error {
+    border-color: #e74c3c;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Mobile responsive animations */
+@media screen and (max-width: 992px) {
+    .floating-chart, 
+    .floating-notification,
+    .chart-container {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .scroll-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+} 
