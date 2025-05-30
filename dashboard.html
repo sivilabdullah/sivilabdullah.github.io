@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TradeMaster AI</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="images/logo.svg" alt="TradeMaster AI Logo">
+            </a>
+            <div class="nav-links">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="#" id="user-email"></a>
+                <a href="#" onclick="authAPI.logout()">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Trading Dashboard</h1>
+                <p class="subtitle">Manage your trading bot and monitor performance</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Bot Status Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Bot Status</h3>
+                        <div class="status-indicator" id="bot-status">
+                            <span class="status-dot offline"></span>
+                            <span>Offline</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="bot-controls">
+                            <button class="button primary" id="start-bot" disabled>Start Bot</button>
+                            <button class="button secondary" id="stop-bot" disabled>Stop Bot</button>
+                        </div>
+                        <p class="bot-info">Configure your API keys to start trading</p>
+                    </div>
+                </div>
+
+                <!-- API Keys Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Binance API Keys</h3>
+                        <div class="api-status" id="api-status">
+                            <span class="status-dot offline"></span>
+                            <span>Not Configured</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <form class="api-form" id="api-keys-form">
+                            <div class="form-group">
+                                <label for="api-key">API Key</label>
+                                <input type="text" id="api-key" name="api-key" placeholder="Enter your Binance API Key">
+                            </div>
+                            <div class="form-group">
+                                <label for="secret-key">Secret Key</label>
+                                <input type="password" id="secret-key" name="secret-key" placeholder="Enter your Binance Secret Key">
+                            </div>
+                            <button type="submit" class="button primary">Save & Test Connection</button>
+                        </form>
+                        <div class="api-help">
+                            <p><strong>How to get your API keys:</strong></p>
+                            <ol>
+                                <li>Go to <a href="https://www.binance.com/en/my/settings/api-management" target="_blank">Binance API Management</a></li>
+                                <li>Create a new API key</li>
+                                <li>Enable "Enable Futures" permission</li>
+                                <li>Copy your API key and secret here</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Performance</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="performance-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Trades</span>
+                                <span class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Win Rate</span>
+                                <span class="stat-value">0%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total PnL</span>
+                                <span class="stat-value">$0.00</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Today's PnL</span>
+                                <span class="stat-value">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Subscription</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="subscription-info">
+                            <div class="plan-info">
+                                <span class="plan-name" id="plan-name">Free Plan</span>
+                                <span class="plan-status active">Active</span>
+                            </div>
+                            <div class="plan-limits">
+                                <p>Daily trades: <strong>10/10</strong></p>
+                                <p>Features: Basic signals only</p>
+                            </div>
+                            <button class="button primary">Upgrade Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html> 
