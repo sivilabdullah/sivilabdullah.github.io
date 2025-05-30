@@ -113,29 +113,201 @@ class AuthAPI {
         }
     }
 
-    // Save API keys (demo mode)
-    async saveAPIKeys(apiKey, secretKey) {
+    // Get API keys (demo mode)
+    async getAPIKeys() {
         try {
             // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             const user = this.getCurrentUser();
             if (!user) {
                 return { success: false, message: 'User not logged in' };
             }
 
+            // Get API keys from localStorage
+            const apiKeys = localStorage.getItem('demo_api_keys');
+            if (apiKeys) {
+                const keys = JSON.parse(apiKeys);
+                if (keys.userId === user.id) {
+                    return { 
+                        success: true, 
+                        data: { 
+                            has_keys: true,
+                            api_key: this.maskAPIKey(keys.api_key),
+                            secret_key: '••••••••••••••••'
+                        } 
+                    };
+                }
+            }
+
+            return { success: true, data: { has_keys: false } };
+        } catch (error) {
+            console.error('Get API Keys error:', error);
+            return { success: false, message: 'Failed to get API keys' };
+        }
+    }
+
+    // Mask API key for display
+    maskAPIKey(apiKey) {
+        if (!apiKey || apiKey.length < 8) return '••••••••';
+        return apiKey.substring(0, 8) + '••••••••••••••••';
+    }
+
+    // Save API keys (demo mode)
+    async saveAPIKeys(apiKey, secretKey) {
+        try {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            const user = this.getCurrentUser();
+            if (!user) {
+                return { success: false, message: 'User not logged in' };
+            }
+
+            // Validate API key format (basic validation)
+            if (!this.validateBinanceAPIKey(apiKey, secretKey)) {
+                return { success: false, message: 'Invalid API key format. Please check your keys.' };
+            }
+
             // Save API keys to localStorage (in real app, would be encrypted)
             localStorage.setItem('demo_api_keys', JSON.stringify({
                 api_key: apiKey,
                 secret_key: secretKey,
-                userId: user.id
+                userId: user.id,
+                timestamp: Date.now()
             }));
 
-            return { success: true, message: 'API keys saved successfully' };
+            // Simulate bot connection
+            await this.connectToBot(apiKey, secretKey);
+
+            return { success: true, message: 'API keys saved and bot connected successfully!' };
         } catch (error) {
             console.error('API Keys error:', error);
-            return { success: false, message: 'Failed to save API keys' };
+            return { success: false, message: 'Failed to save API keys or connect to bot' };
         }
+    }
+
+    // Validate Binance API key format
+    validateBinanceAPIKey(apiKey, secretKey) {
+        // Basic validation for Binance API key format
+        const apiKeyPattern = /^[A-Za-z0-9]{64}$/;
+        const secretKeyPattern = /^[A-Za-z0-9]{64}$/;
+        
+        return apiKeyPattern.test(apiKey) && secretKeyPattern.test(secretKey);
+    }
+
+    // Connect to bot (simulate API call to your bot)
+    async connectToBot(apiKey, secretKey) {
+        try {
+            // Simulate bot connection with API keys
+            console.log('Connecting to trading bot...');
+            
+            // In real implementation, you would send API keys to your bot
+            // Example webhook or API call:
+            /*
+            const response = await fetch('YOUR_BOT_WEBHOOK_URL/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: this.getCurrentUser().id,
+                    api_key: apiKey,
+                    secret_key: secretKey,
+                    action: 'connect'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to connect to bot');
+            }
+            */
+            
+            // Simulate successful connection
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            return { success: true };
+        } catch (error) {
+            console.error('Bot connection error:', error);
+            throw error;
+        }
+    }
+
+    // Start/Stop bot methods
+    async startBot() {
+        try {
+            const user = this.getCurrentUser();
+            const apiKeys = JSON.parse(localStorage.getItem('demo_api_keys') || '{}');
+            
+            if (!user || !apiKeys.api_key) {
+                return { success: false, message: 'API keys not configured' };
+            }
+
+            // Simulate bot start
+            console.log('Starting trading bot...');
+            
+            // In real implementation:
+            /*
+            const response = await fetch('YOUR_BOT_WEBHOOK_URL/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    action: 'start'
+                })
+            });
+            */
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            localStorage.setItem('bot_status', 'running');
+            
+            return { success: true, message: 'Trading bot started successfully!' };
+        } catch (error) {
+            console.error('Start bot error:', error);
+            return { success: false, message: 'Failed to start bot' };
+        }
+    }
+
+    async stopBot() {
+        try {
+            const user = this.getCurrentUser();
+            
+            if (!user) {
+                return { success: false, message: 'User not logged in' };
+            }
+
+            // Simulate bot stop
+            console.log('Stopping trading bot...');
+            
+            // In real implementation:
+            /*
+            const response = await fetch('YOUR_BOT_WEBHOOK_URL/stop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    action: 'stop'
+                })
+            });
+            */
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            localStorage.setItem('bot_status', 'stopped');
+            
+            return { success: true, message: 'Trading bot stopped' };
+        } catch (error) {
+            console.error('Stop bot error:', error);
+            return { success: false, message: 'Failed to stop bot' };
+        }
+    }
+
+    // Get bot status
+    getBotStatus() {
+        return localStorage.getItem('bot_status') || 'offline';
     }
 
     // Check if user is logged in
