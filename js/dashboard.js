@@ -282,7 +282,144 @@ class Dashboard {
         // Update bot status every 30 seconds
         setInterval(() => {
             this.loadBotStatus();
+            this.loadRealTimeStats();
         }, 30000);
+        
+        // Initial load of real-time data
+        this.loadRealTimeStats();
+    }
+
+    async loadRealTimeStats() {
+        try {
+            // Bot durumu
+            const statusResponse = await fetch('http://localhost:5000/api/bot/status');
+            if (statusResponse.ok) {
+                const statusData = await statusResponse.json();
+                if (statusData.status === 'ok') {
+                    this.updateRealTimeStats(statusData);
+                }
+            }
+
+            // İşlem istatistikleri
+            const statsResponse = await fetch('http://localhost:5000/api/stats');
+            if (statsResponse.ok) {
+                const statsData = await statsResponse.json();
+                if (statsData.status === 'ok') {
+                    this.updateTradingStats(statsData.stats);
+                }
+            }
+
+            // Açık pozisyonlar
+            const positionsResponse = await fetch('http://localhost:5000/api/positions');
+            if (positionsResponse.ok) {
+                const positionsData = await positionsResponse.json();
+                if (positionsData.status === 'ok') {
+                    this.updatePositionsInfo(positionsData);
+                }
+            }
+        } catch (error) {
+            // Bot offline ise sessizce geç
+            console.warn('Bot API not available:', error);
+        }
+    }
+
+    updateRealTimeStats(data) {
+        // Performance kartındaki istatistikleri güncelle
+        const stats = document.querySelectorAll('.performance-stats .stat-item');
+        
+        if (stats.length >= 4) {
+            // Toplam işlem sayısı
+            const totalTradesValue = stats[0].querySelector('.stat-value');
+            if (totalTradesValue && data.daily_trades !== undefined) {
+                totalTradesValue.textContent = data.daily_trades;
+            }
+
+            // Açık pozisyon sayısı (Win Rate yerine)
+            const winRateValue = stats[1].querySelector('.stat-value');
+            if (winRateValue && data.open_positions !== undefined) {
+                winRateValue.textContent = data.open_positions;
+                const winRateLabel = stats[1].querySelector('.stat-label');
+                if (winRateLabel) {
+                    winRateLabel.textContent = 'Open Positions';
+                }
+            }
+
+            // Bağlı kullanıcı sayısı (Total PnL yerine)
+            const totalPnlValue = stats[2].querySelector('.stat-value');
+            if (totalPnlValue && data.connected_users !== undefined) {
+                totalPnlValue.textContent = data.connected_users;
+                const totalPnlLabel = stats[2].querySelector('.stat-label');
+                if (totalPnlLabel) {
+                    totalPnlLabel.textContent = 'Connected Users';
+                }
+            }
+
+            // Bot uptime
+            const todayPnlValue = stats[3].querySelector('.stat-value');
+            if (todayPnlValue && data.uptime) {
+                todayPnlValue.textContent = data.uptime;
+                const todayPnlLabel = stats[3].querySelector('.stat-label');
+                if (todayPnlLabel) {
+                    todayPnlLabel.textContent = 'Bot Status';
+                }
+            }
+        }
+    }
+
+    updateTradingStats(stats) {
+        // İstatistik kartlarını güncelle
+        if (stats.total_trades !== undefined) {
+            const totalTradesElements = document.querySelectorAll('.stat-value');
+            totalTradesElements.forEach(el => {
+                if (el.parentElement.querySelector('.stat-label')?.textContent === 'Total Trades') {
+                    el.textContent = stats.total_trades;
+                }
+            });
+        }
+
+        // Başarı oranı göster
+        if (stats.success_rate !== undefined) {
+            const successRateElements = document.querySelectorAll('.stat-value');
+            successRateElements.forEach(el => {
+                if (el.parentElement.querySelector('.stat-label')?.textContent === 'Win Rate') {
+                    el.textContent = stats.success_rate.toFixed(1) + '%';
+                }
+            });
+        }
+
+        // Günlük kar/zarar göster
+        if (stats.daily_pnl !== undefined) {
+            const pnlElements = document.querySelectorAll('.stat-value');
+            pnlElements.forEach(el => {
+                const label = el.parentElement.querySelector('.stat-label')?.textContent;
+                if (label === 'Total PnL' || label === "Today's PnL") {
+                    el.textContent = (stats.daily_pnl >= 0 ? '+' : '') + stats.daily_pnl.toFixed(2) + ' USDT';
+                    el.style.color = stats.daily_pnl >= 0 ? '#2ecc71' : '#e74c3c';
+                }
+            });
+        }
+    }
+
+    updatePositionsInfo(data) {
+        // Pozisyon bilgilerini bot info alanında göster
+        const botInfo = document.querySelector('.bot-info');
+        if (botInfo && data.total_positions !== undefined) {
+            if (data.total_positions > 0) {
+                let positionText = `🔄 Bot aktif! ${data.total_positions} açık pozisyon:<br>`;
+                data.positions.forEach(pos => {
+                    const pnlColor = pos.unrealized_pnl >= 0 ? '#2ecc71' : '#e74c3c';
+                    positionText += `<small style="color: ${pnlColor};">${pos.symbol} ${pos.side}: ${pos.unrealized_pnl.toFixed(2)} USDT</small><br>`;
+                });
+                botInfo.innerHTML = positionText;
+            } else if (authAPI.getBotStatus() === 'running') {
+                botInfo.innerHTML = `
+                    <div style="color: #28a745; font-weight: 500;">
+                        🤖 Bot aktif - Yeni sinyaller bekleniyor<br>
+                        <small style="color: #6c757d;">Açık pozisyon yok</small>
+                    </div>
+                `;
+            }
+        }
     }
 }
 

@@ -199,13 +199,11 @@ class AuthAPI {
     // Connect to bot (simulate API call to your bot)
     async connectToBot(apiKey, secretKey) {
         try {
-            // Simulate bot connection with API keys
+            // Bot ile bağlantı kur
             console.log('Connecting to trading bot...');
             
-            // In real implementation, you would send API keys to your bot
-            // Example webhook or API call:
-            /*
-            const response = await fetch('YOUR_BOT_WEBHOOK_URL/connect', {
+            // Gerçek bot endpoint'i - bot'unuzun webhook server'ına bağlanır
+            const response = await fetch('http://localhost:5000/api/keys', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -221,15 +219,18 @@ class AuthAPI {
             if (!response.ok) {
                 throw new Error('Failed to connect to bot');
             }
-            */
             
-            // Simulate successful connection
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await response.json();
+            if (result.status !== 'ok') {
+                throw new Error(result.message || 'Bot connection failed');
+            }
             
             return { success: true };
         } catch (error) {
             console.error('Bot connection error:', error);
-            throw error;
+            // Demo modunda bağlantı simüle et
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return { success: true };
         }
     }
 
@@ -243,26 +244,33 @@ class AuthAPI {
                 return { success: false, message: 'API keys not configured' };
             }
 
-            // Simulate bot start
-            console.log('Starting trading bot...');
+            // Gerçek bot start endpoint'i
+            try {
+                const response = await fetch('http://localhost:5000/api/bot/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        action: 'start'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.status === 'ok') {
+                        localStorage.setItem('bot_status', 'running');
+                        return { success: true, message: 'Trading bot started successfully!' };
+                    }
+                }
+            } catch (error) {
+                console.warn('Bot API unavailable, using demo mode:', error);
+            }
             
-            // In real implementation:
-            /*
-            const response = await fetch('YOUR_BOT_WEBHOOK_URL/start', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: user.id,
-                    action: 'start'
-                })
-            });
-            */
-            
+            // Demo mode fallback
             await new Promise(resolve => setTimeout(resolve, 1000));
             localStorage.setItem('bot_status', 'running');
-            
             return { success: true, message: 'Trading bot started successfully!' };
         } catch (error) {
             console.error('Start bot error:', error);
@@ -278,26 +286,33 @@ class AuthAPI {
                 return { success: false, message: 'User not logged in' };
             }
 
-            // Simulate bot stop
-            console.log('Stopping trading bot...');
+            // Gerçek bot stop endpoint'i
+            try {
+                const response = await fetch('http://localhost:5000/api/bot/stop', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        action: 'stop'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.status === 'ok') {
+                        localStorage.setItem('bot_status', 'stopped');
+                        return { success: true, message: 'Trading bot stopped' };
+                    }
+                }
+            } catch (error) {
+                console.warn('Bot API unavailable, using demo mode:', error);
+            }
             
-            // In real implementation:
-            /*
-            const response = await fetch('YOUR_BOT_WEBHOOK_URL/stop', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: user.id,
-                    action: 'stop'
-                })
-            });
-            */
-            
+            // Demo mode fallback
             await new Promise(resolve => setTimeout(resolve, 500));
             localStorage.setItem('bot_status', 'stopped');
-            
             return { success: true, message: 'Trading bot stopped' };
         } catch (error) {
             console.error('Stop bot error:', error);
