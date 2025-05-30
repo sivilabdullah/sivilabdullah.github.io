@@ -3,6 +3,13 @@ node_modules/
 */node_modules/
 **/node_modules/
 
+# Backend and virtual environments
+backend/
+venv/
+env/
+.venv/
+.env/
+
 # Environment variables
 .env
 .env.local

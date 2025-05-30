@@ -1,7 +1,0 @@
-Flask==2.3.3
-Flask-SQLAlchemy==3.0.5
-Flask-CORS==4.0.0
-PyJWT==2.8.0
-Werkzeug==2.3.7
-python-binance==1.0.19
-cryptography==41.0.4 
