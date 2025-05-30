@@ -169,8 +169,8 @@ class Dashboard {
         }
 
         // Basic format validation
-        if (apiKey.length !== 64 || secretKey.length !== 64) {
-            showMessage('Invalid API key format. Binance API keys should be 64 characters long.', 'error');
+        if (apiKey.length < 20 || secretKey.length < 20) {
+            showMessage('Invalid API key format. Please enter valid Binance API keys.', 'error');
             return;
         }
 

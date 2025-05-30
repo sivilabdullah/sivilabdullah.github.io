@@ -189,11 +189,42 @@ class AuthAPI {
 
     // Validate Binance API key format
     validateBinanceAPIKey(apiKey, secretKey) {
-        // Basic validation for Binance API key format
-        const apiKeyPattern = /^[A-Za-z0-9]{64}$/;
-        const secretKeyPattern = /^[A-Za-z0-9]{64}$/;
+        // Updated validation for modern Binance API key formats
         
-        return apiKeyPattern.test(apiKey) && secretKeyPattern.test(secretKey);
+        // Check for minimum lengths
+        if (!apiKey || !secretKey || apiKey.trim().length < 20 || secretKey.trim().length < 20) {
+            return false;
+        }
+        
+        // Remove whitespace
+        apiKey = apiKey.trim();
+        secretKey = secretKey.trim();
+        
+        // Ed25519 keys (modern, recommended format)
+        if (apiKey.startsWith('-----BEGIN PUBLIC KEY-----') && apiKey.includes('-----END PUBLIC KEY-----')) {
+            // Ed25519 public key format
+            return secretKey.length >= 40; // Ed25519 signatures are typically 64 chars in base64
+        }
+        
+        // RSA keys (2048 or 4096 bit)
+        if (apiKey.startsWith('-----BEGIN PUBLIC KEY-----') && apiKey.includes('-----END PUBLIC KEY-----')) {
+            // RSA public key format
+            return secretKey.length >= 40;
+        }
+        
+        // HMAC keys (legacy format - 64 characters)
+        const hmacApiKeyPattern = /^[A-Za-z0-9]{64}$/;
+        const hmacSecretKeyPattern = /^[A-Za-z0-9]{64}$/;
+        
+        if (hmacApiKeyPattern.test(apiKey) && hmacSecretKeyPattern.test(secretKey)) {
+            return true;
+        }
+        
+        // Modern Binance API keys (variable length alphanumeric)
+        const modernApiKeyPattern = /^[A-Za-z0-9]{40,100}$/;
+        const modernSecretPattern = /^[A-Za-z0-9]{40,100}$/;
+        
+        return modernApiKeyPattern.test(apiKey) && modernSecretPattern.test(secretKey);
     }
 
     // Connect to bot (simulate API call to your bot)
