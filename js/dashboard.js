@@ -2,7 +2,31 @@
 class Dashboard {
     constructor() {
         this.user = authAPI.getCurrentUser();
+        this.addDangerButtonStyles();
         this.init();
+    }
+
+    addDangerButtonStyles() {
+        // Danger button için CSS stilleri ekle
+        const style = document.createElement('style');
+        style.textContent = `
+            .button-danger {
+                background: #dc3545 !important;
+                color: white !important;
+                border: 1px solid #dc3545 !important;
+            }
+            .button-danger:hover {
+                background: #c82333 !important;
+                border-color: #bd2130 !important;
+            }
+            .button-danger:disabled {
+                background: #6c757d !important;
+                border-color: #6c757d !important;
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     init() {
@@ -37,18 +61,33 @@ class Dashboard {
 
     async loadAPIKeysStatus() {
         try {
-            const result = await authAPI.getAPIKeys();
-            
-            if (result.success && result.data.has_keys) {
-                this.updateAPIStatus(true, result.data);
-                this.enableBotControls();
-            } else {
-                this.updateAPIStatus(false);
-                this.disableBotControls();
+            // localStorage'den direkt API key'leri kontrol et
+            const user = authAPI.getCurrentUser();
+            if (!user) return;
+
+            const savedKeys = localStorage.getItem('demo_api_keys');
+            if (savedKeys) {
+                const keyData = JSON.parse(savedKeys);
+                if (keyData.userId === user.id && keyData.api_key) {
+                    // API key'ler mevcut
+                    this.updateAPIStatus(true, {
+                        api_key: authAPI.maskAPIKey(keyData.api_key),
+                        connected_at: keyData.timestamp
+                    });
+                    this.enableBotControls();
+                    this.showConnectedState();
+                    return;
+                }
             }
+
+            // API key'ler yok
+            this.updateAPIStatus(false);
+            this.disableBotControls();
+            this.showDisconnectedState();
         } catch (error) {
             console.error('Error loading API keys status:', error);
             this.updateAPIStatus(false);
+            this.showDisconnectedState();
         }
     }
 
@@ -183,25 +222,27 @@ class Dashboard {
 
             if (result.success) {
                 showMessage('✅ API keys saved and bot connected successfully!', 'success');
-                this.updateAPIStatus(true, { api_key: apiKey });
+                
+                // UI'ı connected state'e geçir
+                this.updateAPIStatus(true, { 
+                    api_key: authAPI.maskAPIKey(apiKey) 
+                });
                 this.enableBotControls();
+                this.showConnectedState();
                 
-                // Clear secret key input for security
-                document.getElementById('secret-key').value = '';
-                
-                // Add bot connection info
-                this.addBotConnectionInfo();
             } else {
                 showMessage(`❌ ${result.message}`, 'error');
+                // Re-enable submit button on error
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save & Test Connection';
             }
         } catch (error) {
             showMessage('❌ Error connecting to bot. Please try again.', 'error');
             console.error('API Keys error:', error);
+            // Re-enable submit button on error
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save & Test Connection';
         }
-
-        // Re-enable submit button
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Save & Test Connection';
     }
 
     addBotConnectionInfo() {
@@ -418,6 +459,88 @@ class Dashboard {
                         <small style="color: #6c757d;">Açık pozisyon yok</small>
                     </div>
                 `;
+            }
+        }
+    }
+
+    showConnectedState() {
+        // API key form'unu gizle, bağlantı bilgilerini göster
+        const apiForm = document.getElementById('api-keys-form');
+        const apiKeyInput = document.getElementById('api-key');
+        const secretKeyInput = document.getElementById('secret-key');
+        const submitBtn = apiForm?.querySelector('button[type="submit"]');
+
+        if (apiForm) {
+            // Form'u "connected" moduna al
+            if (apiKeyInput) apiKeyInput.disabled = true;
+            if (secretKeyInput) {
+                secretKeyInput.value = '••••••••••••••••••••••••••••••••';
+                secretKeyInput.disabled = true;
+            }
+            if (submitBtn) {
+                submitBtn.textContent = 'Disconnect API Keys';
+                submitBtn.className = 'button button-danger';
+                submitBtn.onclick = this.disconnectAPIKeys.bind(this);
+            }
+        }
+
+        // Bağlantı bilgilerini göster
+        this.addBotConnectionInfo();
+    }
+
+    showDisconnectedState() {
+        // API key form'unu aktif et
+        const apiForm = document.getElementById('api-keys-form');
+        const apiKeyInput = document.getElementById('api-key');
+        const secretKeyInput = document.getElementById('secret-key');
+        const submitBtn = apiForm?.querySelector('button[type="submit"]');
+
+        if (apiForm) {
+            if (apiKeyInput) {
+                apiKeyInput.disabled = false;
+                apiKeyInput.value = '';
+                apiKeyInput.placeholder = 'Enter your Binance API Key';
+            }
+            if (secretKeyInput) {
+                secretKeyInput.disabled = false;
+                secretKeyInput.value = '';
+                secretKeyInput.placeholder = 'Enter your Binance Secret Key';
+            }
+            if (submitBtn) {
+                submitBtn.textContent = 'Save & Test Connection';
+                submitBtn.className = 'button button-primary';
+                submitBtn.onclick = null; // Form submit handler'ı kullan
+            }
+        }
+    }
+
+    async disconnectAPIKeys() {
+        const user = authAPI.getCurrentUser();
+        if (!user) return;
+
+        if (confirm('Are you sure you want to disconnect your API keys? This will stop the trading bot.')) {
+            try {
+                // localStorage'den API key'leri sil
+                localStorage.removeItem('demo_api_keys');
+                
+                // Bot'u durdur
+                await authAPI.stopBot();
+                
+                // UI'ı güncelle
+                this.updateAPIStatus(false);
+                this.disableBotControls();
+                this.showDisconnectedState();
+                
+                showMessage('🔓 API keys disconnected successfully', 'info');
+                
+                // Bot bilgisini güncelle
+                const botInfo = document.querySelector('.bot-info');
+                if (botInfo) {
+                    botInfo.innerHTML = 'Configure your API keys to start trading';
+                }
+            } catch (error) {
+                console.error('Disconnect error:', error);
+                showMessage('❌ Error disconnecting API keys', 'error');
             }
         }
     }
