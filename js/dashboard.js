@@ -464,7 +464,7 @@ class Dashboard {
     }
 
     showConnectedState() {
-        // API key form'unu gizle, bağlantı bilgilerini göster
+        // API key form'unu connected moduna al
         const apiForm = document.getElementById('api-keys-form');
         const apiKeyInput = document.getElementById('api-key');
         const secretKeyInput = document.getElementById('secret-key');
@@ -477,15 +477,260 @@ class Dashboard {
                 secretKeyInput.value = '••••••••••••••••••••••••••••••••';
                 secretKeyInput.disabled = true;
             }
+            
+            // Mevcut submit butonunu gizle ve yeni butonlar ekle
             if (submitBtn) {
-                submitBtn.textContent = 'Disconnect API Keys';
-                submitBtn.className = 'button button-danger';
-                submitBtn.onclick = this.disconnectAPIKeys.bind(this);
+                submitBtn.style.display = 'none';
             }
+            
+            // Connected state butonlarını kontrol et ve ekle
+            this.addConnectedStateButtons(apiForm);
         }
 
         // Bağlantı bilgilerini göster
         this.addBotConnectionInfo();
+    }
+
+    addConnectedStateButtons(apiForm) {
+        // Eğer butonlar zaten varsa, tekrar ekleme
+        let buttonContainer = apiForm.querySelector('.connected-buttons');
+        if (buttonContainer) {
+            return;
+        }
+
+        // Buton container'ı oluştur
+        buttonContainer = document.createElement('div');
+        buttonContainer.className = 'connected-buttons';
+        buttonContainer.style.cssText = `
+            display: flex; 
+            gap: 10px; 
+            margin-top: 15px;
+            flex-wrap: wrap;
+        `;
+
+        // Update API Keys butonu
+        const updateBtn = document.createElement('button');
+        updateBtn.type = 'button';
+        updateBtn.className = 'button button-secondary';
+        updateBtn.textContent = '🔄 Update API Keys';
+        updateBtn.style.cssText = 'flex: 1; min-width: 140px;';
+        updateBtn.onclick = this.switchToUpdateMode.bind(this);
+
+        // Delete API Keys butonu
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'button button-danger';
+        deleteBtn.textContent = '🗑️ Delete API Keys';
+        deleteBtn.style.cssText = 'flex: 1; min-width: 140px;';
+        deleteBtn.onclick = this.deleteAPIKeys.bind(this);
+
+        // Show API Key butonu
+        const showBtn = document.createElement('button');
+        showBtn.type = 'button';
+        showBtn.className = 'button button-secondary';
+        showBtn.textContent = '👁️ Show Keys';
+        showBtn.style.cssText = 'flex: 1; min-width: 100px; font-size: 12px;';
+        showBtn.onclick = this.showAPIKeys.bind(this);
+
+        buttonContainer.appendChild(updateBtn);
+        buttonContainer.appendChild(deleteBtn);
+        buttonContainer.appendChild(showBtn);
+        
+        apiForm.appendChild(buttonContainer);
+    }
+
+    switchToUpdateMode() {
+        // Form'u update moduna geçir
+        const apiKeyInput = document.getElementById('api-key');
+        const secretKeyInput = document.getElementById('secret-key');
+        const submitBtn = document.querySelector('#api-keys-form button[type="submit"]');
+        const buttonContainer = document.querySelector('.connected-buttons');
+
+        if (apiKeyInput) {
+            apiKeyInput.disabled = false;
+            apiKeyInput.value = '';
+            apiKeyInput.placeholder = 'Enter new Binance API Key';
+        }
+        if (secretKeyInput) {
+            secretKeyInput.disabled = false;
+            secretKeyInput.value = '';
+            secretKeyInput.placeholder = 'Enter new Binance Secret Key';
+        }
+        if (submitBtn) {
+            submitBtn.style.display = 'block';
+            submitBtn.textContent = 'Update & Test Connection';
+            submitBtn.className = 'button button-primary';
+        }
+        if (buttonContainer) {
+            buttonContainer.style.display = 'none';
+        }
+
+        showMessage('💡 You can now update your API keys', 'info');
+    }
+
+    async deleteAPIKeys() {
+        const result = await this.showDeleteConfirmDialog();
+        if (!result) return;
+
+        try {
+            const user = authAPI.getCurrentUser();
+            if (!user) return;
+
+            // Loading state göster
+            const deleteBtn = document.querySelector('.connected-buttons .button-danger');
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = '🗑️ Deleting...';
+            }
+
+            // Bot'u durdur
+            await authAPI.stopBot();
+            
+            // localStorage'den API key'leri sil
+            localStorage.removeItem('demo_api_keys');
+            localStorage.removeItem('bot_status');
+            
+            // UI'ı güncelle
+            this.updateAPIStatus(false);
+            this.disableBotControls();
+            this.showDisconnectedState();
+            
+            showMessage('🗑️ API keys deleted successfully! Bot has been stopped.', 'success');
+            
+            // Bot bilgisini güncelle
+            const botInfo = document.querySelector('.bot-info');
+            if (botInfo) {
+                botInfo.innerHTML = 'Configure your API keys to start trading';
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            showMessage('❌ Error deleting API keys', 'error');
+            
+            // Button'ı normale döndür
+            const deleteBtn = document.querySelector('.connected-buttons .button-danger');
+            if (deleteBtn) {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = '🗑️ Delete API Keys';
+            }
+        }
+    }
+
+    async showDeleteConfirmDialog() {
+        return new Promise((resolve) => {
+            // Custom confirmation dialog oluştur
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.7); z-index: 10000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: white; padding: 30px; border-radius: 12px;
+                max-width: 400px; margin: 20px; text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+
+            dialog.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+                <h3 style="color: #dc3545; margin-bottom: 15px;">Delete API Keys?</h3>
+                <p style="margin-bottom: 25px; color: #666;">
+                    This will permanently delete your API keys and stop the trading bot.<br>
+                    <strong>This action cannot be undone.</strong>
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button id="cancel-delete" class="button button-secondary">
+                        Cancel
+                    </button>
+                    <button id="confirm-delete" class="button button-danger">
+                        🗑️ Delete Keys
+                    </button>
+                </div>
+            `;
+
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+
+            // Event listeners
+            document.getElementById('cancel-delete').onclick = () => {
+                document.body.removeChild(overlay);
+                resolve(false);
+            };
+
+            document.getElementById('confirm-delete').onclick = () => {
+                document.body.removeChild(overlay);
+                resolve(true);
+            };
+
+            // ESC tuşu ile iptal
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(overlay);
+                    document.removeEventListener('keydown', handleEscape);
+                    resolve(false);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+        });
+    }
+
+    async showAPIKeys() {
+        const user = authAPI.getCurrentUser();
+        if (!user) return;
+
+        const savedKeys = localStorage.getItem('demo_api_keys');
+        if (!savedKeys) {
+            showMessage('❌ No API keys found', 'error');
+            return;
+        }
+
+        const keyData = JSON.parse(savedKeys);
+        
+        // API key'leri göster modal
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+        `;
+
+        const dialog = document.createElement('div');
+        dialog.style.cssText = `
+            background: white; padding: 30px; border-radius: 12px;
+            max-width: 500px; margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        `;
+
+        dialog.innerHTML = `
+            <h3 style="margin-bottom: 20px; color: #333;">🔑 Your API Keys</h3>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="margin-bottom: 10px;"><strong>API Key:</strong></p>
+                <code style="word-break: break-all; background: #e9ecef; padding: 5px; border-radius: 4px; display: block; font-size: 12px;">${keyData.api_key}</code>
+                
+                <p style="margin: 15px 0 10px 0;"><strong>Secret Key:</strong></p>
+                <code style="word-break: break-all; background: #e9ecef; padding: 5px; border-radius: 4px; display: block; font-size: 12px;">${keyData.secret_key}</code>
+            </div>
+            <div style="text-align: center;">
+                <button id="close-keys" class="button button-primary">Close</button>
+            </div>
+        `;
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        document.getElementById('close-keys').onclick = () => {
+            document.body.removeChild(overlay);
+        };
+
+        // ESC tuşu ile kapat
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                document.body.removeChild(overlay);
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
     }
 
     showDisconnectedState() {
@@ -496,6 +741,12 @@ class Dashboard {
         const submitBtn = apiForm?.querySelector('button[type="submit"]');
 
         if (apiForm) {
+            // Connected state butonlarını temizle
+            const buttonContainer = apiForm.querySelector('.connected-buttons');
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
+
             if (apiKeyInput) {
                 apiKeyInput.disabled = false;
                 apiKeyInput.value = '';
@@ -507,40 +758,10 @@ class Dashboard {
                 secretKeyInput.placeholder = 'Enter your Binance Secret Key';
             }
             if (submitBtn) {
+                submitBtn.style.display = 'block';
                 submitBtn.textContent = 'Save & Test Connection';
                 submitBtn.className = 'button button-primary';
                 submitBtn.onclick = null; // Form submit handler'ı kullan
-            }
-        }
-    }
-
-    async disconnectAPIKeys() {
-        const user = authAPI.getCurrentUser();
-        if (!user) return;
-
-        if (confirm('Are you sure you want to disconnect your API keys? This will stop the trading bot.')) {
-            try {
-                // localStorage'den API key'leri sil
-                localStorage.removeItem('demo_api_keys');
-                
-                // Bot'u durdur
-                await authAPI.stopBot();
-                
-                // UI'ı güncelle
-                this.updateAPIStatus(false);
-                this.disableBotControls();
-                this.showDisconnectedState();
-                
-                showMessage('🔓 API keys disconnected successfully', 'info');
-                
-                // Bot bilgisini güncelle
-                const botInfo = document.querySelector('.bot-info');
-                if (botInfo) {
-                    botInfo.innerHTML = 'Configure your API keys to start trading';
-                }
-            } catch (error) {
-                console.error('Disconnect error:', error);
-                showMessage('❌ Error disconnecting API keys', 'error');
             }
         }
     }
