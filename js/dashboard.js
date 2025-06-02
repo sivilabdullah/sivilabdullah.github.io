@@ -2,7 +2,7 @@
 class Dashboard {
     constructor() {
         this.user = authAPI.getCurrentUser();
-        this.botApiUrl = 'http://localhost:5001';
+        this.botApiUrl = 'https://tender-happiness-copy-production.up.railway.app';
         this.addDangerButtonStyles();
         this.init();
     }

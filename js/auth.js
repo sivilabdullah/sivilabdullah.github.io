@@ -1,9 +1,9 @@
 // Authentication demo handler (for static site demo purposes)
 class AuthAPI {
     constructor() {
-        // Temporary localhost mode while Railway deployment is fixed
+        // Production mode with Railway backend
         this.demoMode = false;
-        this.botApiUrl = 'http://localhost:5001';
+        this.botApiUrl = 'https://tender-happiness-copy-production.up.railway.app';
         this.token = localStorage.getItem('token');
     }
 
