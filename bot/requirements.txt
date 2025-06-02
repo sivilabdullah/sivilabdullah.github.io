@@ -1,0 +1,11 @@
+flask
+flask-cors
+binance-futures-connector
+gunicorn
+pandas
+matplotlib
+numpy
+requests
+schedule
+python-binance
+pathlib
