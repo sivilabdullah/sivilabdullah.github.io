@@ -1,11 +1,5 @@
-flask
-flask-cors
-binance-futures-connector
-gunicorn
-pandas
-matplotlib
-numpy
-requests
-schedule
-python-binance
-pathlib
+flask==3.0.0
+flask-cors==4.0.0
+binance-connector==3.8.1
+requests==2.31.0
+gunicorn==21.2.0 
