@@ -2,6 +2,7 @@
 class Dashboard {
     constructor() {
         this.user = authAPI.getCurrentUser();
+        this.botApiUrl = 'http://localhost:5001';
         this.addDangerButtonStyles();
         this.init();
     }
@@ -333,7 +334,7 @@ class Dashboard {
     async loadRealTimeStats() {
         try {
             // Bot durumu
-            const statusResponse = await fetch('http://localhost:5000/api/bot/status');
+            const statusResponse = await fetch(`${this.botApiUrl}/api/bot/status`);
             if (statusResponse.ok) {
                 const statusData = await statusResponse.json();
                 if (statusData.status === 'ok') {
@@ -342,7 +343,7 @@ class Dashboard {
             }
 
             // İşlem istatistikleri
-            const statsResponse = await fetch('http://localhost:5000/api/stats');
+            const statsResponse = await fetch(`${this.botApiUrl}/api/stats`);
             if (statsResponse.ok) {
                 const statsData = await statsResponse.json();
                 if (statsData.status === 'ok') {
@@ -351,7 +352,7 @@ class Dashboard {
             }
 
             // Açık pozisyonlar
-            const positionsResponse = await fetch('http://localhost:5000/api/positions');
+            const positionsResponse = await fetch(`${this.botApiUrl}/api/positions`);
             if (positionsResponse.ok) {
                 const positionsData = await positionsResponse.json();
                 if (positionsData.status === 'ok') {

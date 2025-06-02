@@ -1,8 +1,9 @@
 // Authentication demo handler (for static site demo purposes)
 class AuthAPI {
     constructor() {
-        // Demo mode - no backend required
-        this.demoMode = true;
+        // Temporary localhost mode while Railway deployment is fixed
+        this.demoMode = false;
+        this.botApiUrl = 'http://localhost:5001';
         this.token = localStorage.getItem('token');
     }
 
@@ -153,12 +154,9 @@ class AuthAPI {
         return apiKey.substring(0, 8) + '••••••••••••••••';
     }
 
-    // Save API keys (demo mode)
+    // Save API keys (REAL backend integration)
     async saveAPIKeys(apiKey, secretKey) {
         try {
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
             const user = this.getCurrentUser();
             if (!user) {
                 return { success: false, message: 'User not logged in' };
@@ -169,21 +167,48 @@ class AuthAPI {
                 return { success: false, message: 'Invalid API key format. Please check your keys.' };
             }
 
-            // Save API keys to localStorage (in real app, would be encrypted)
+            // Connect to REAL bot backend
+            const response = await fetch(`${this.botApiUrl}/api/keys`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    api_key: apiKey,
+                    secret_key: secretKey,
+                    action: 'connect'
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, message: errorData.message || 'Failed to connect to trading bot' };
+            }
+            
+            const result = await response.json();
+            if (result.status !== 'ok') {
+                return { success: false, message: result.message || 'Bot connection failed' };
+            }
+
+            // Save API keys to localStorage for UI purposes
             localStorage.setItem('demo_api_keys', JSON.stringify({
                 api_key: apiKey,
                 secret_key: secretKey,
                 userId: user.id,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                balance: result.balance,
+                testnet: result.testnet
             }));
 
-            // Simulate bot connection
-            await this.connectToBot(apiKey, secretKey);
-
-            return { success: true, message: 'API keys saved and bot connected successfully!' };
+            return { 
+                success: true, 
+                message: `API keys connected! Balance: ${result.balance} USDT ${result.testnet ? '(Testnet)' : '(Live)'}`,
+                data: result
+            };
         } catch (error) {
             console.error('API Keys error:', error);
-            return { success: false, message: 'Failed to save API keys or connect to bot' };
+            return { success: false, message: 'Network error: Could not connect to trading bot' };
         }
     }
 
@@ -229,43 +254,11 @@ class AuthAPI {
 
     // Connect to bot (simulate API call to your bot)
     async connectToBot(apiKey, secretKey) {
-        try {
-            // Bot ile bağlantı kur
-            console.log('Connecting to trading bot...');
-            
-            // Gerçek bot endpoint'i - bot'unuzun webhook server'ına bağlanır
-            const response = await fetch('http://localhost:5000/api/keys', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: this.getCurrentUser().id,
-                    api_key: apiKey,
-                    secret_key: secretKey,
-                    action: 'connect'
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to connect to bot');
-            }
-            
-            const result = await response.json();
-            if (result.status !== 'ok') {
-                throw new Error(result.message || 'Bot connection failed');
-            }
-            
-            return { success: true };
-        } catch (error) {
-            console.error('Bot connection error:', error);
-            // Demo modunda bağlantı simüle et
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            return { success: true };
-        }
+        // This method is now integrated into saveAPIKeys
+        return { success: true };
     }
 
-    // Start/Stop bot methods
+    // Start/Stop bot methods - REAL backend integration
     async startBot() {
         try {
             const user = this.getCurrentUser();
@@ -275,37 +268,33 @@ class AuthAPI {
                 return { success: false, message: 'API keys not configured' };
             }
 
-            // Gerçek bot start endpoint'i
-            try {
-                const response = await fetch('http://localhost:5000/api/bot/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: user.id,
-                        action: 'start'
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.status === 'ok') {
-                        localStorage.setItem('bot_status', 'running');
-                        return { success: true, message: 'Trading bot started successfully!' };
-                    }
-                }
-            } catch (error) {
-                console.warn('Bot API unavailable, using demo mode:', error);
+            // Connect to REAL bot backend
+            const response = await fetch(`${this.botApiUrl}/api/bot/start`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.id
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, message: errorData.message || 'Failed to start trading bot' };
             }
             
-            // Demo mode fallback
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await response.json();
+            if (result.status !== 'ok') {
+                return { success: false, message: result.message || 'Bot start failed' };
+            }
+            
             localStorage.setItem('bot_status', 'running');
-            return { success: true, message: 'Trading bot started successfully!' };
+            return { success: true, message: result.message || 'Trading bot started successfully!' };
+            
         } catch (error) {
             console.error('Start bot error:', error);
-            return { success: false, message: 'Failed to start bot' };
+            return { success: false, message: 'Network error: Could not connect to trading bot' };
         }
     }
 
@@ -317,37 +306,33 @@ class AuthAPI {
                 return { success: false, message: 'User not logged in' };
             }
 
-            // Gerçek bot stop endpoint'i
-            try {
-                const response = await fetch('http://localhost:5000/api/bot/stop', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: user.id,
-                        action: 'stop'
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.status === 'ok') {
-                        localStorage.setItem('bot_status', 'stopped');
-                        return { success: true, message: 'Trading bot stopped' };
-                    }
-                }
-            } catch (error) {
-                console.warn('Bot API unavailable, using demo mode:', error);
+            // Connect to REAL bot backend
+            const response = await fetch(`${this.botApiUrl}/api/bot/stop`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.id
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, message: errorData.message || 'Failed to stop trading bot' };
             }
             
-            // Demo mode fallback
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const result = await response.json();
+            if (result.status !== 'ok') {
+                return { success: false, message: result.message || 'Bot stop failed' };
+            }
+            
             localStorage.setItem('bot_status', 'stopped');
-            return { success: true, message: 'Trading bot stopped' };
+            return { success: true, message: result.message || 'Trading bot stopped successfully!' };
+            
         } catch (error) {
             console.error('Stop bot error:', error);
-            return { success: false, message: 'Failed to stop bot' };
+            return { success: false, message: 'Network error: Could not connect to trading bot' };
         }
     }
 
