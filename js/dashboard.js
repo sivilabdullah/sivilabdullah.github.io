@@ -92,7 +92,29 @@ class Dashboard {
         }
     }
 
-    loadBotStatus() {
+    async loadBotStatus() {
+        try {
+            // Fetch real-time status from backend
+            const response = await fetch(`${this.botApiUrl}/api/bot/status`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    // Update bot status based on backend response
+                    const backendStatus = data.bot_status;
+                    localStorage.setItem('bot_status', backendStatus);
+                    this.updateBotStatus(backendStatus);
+                    
+                    // Update additional bot info
+                    this.updateBotInfo(data);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching bot status from backend:', error);
+        }
+        
+        // Fallback to localStorage if backend is unavailable
         const status = authAPI.getBotStatus();
         this.updateBotStatus(status);
     }
@@ -764,6 +786,32 @@ class Dashboard {
                 submitBtn.className = 'button button-primary';
                 submitBtn.onclick = null; // Form submit handler'ı kullan
             }
+        }
+    }
+
+    updateBotInfo(data) {
+        // Update connected users count
+        const connectedUsers = document.querySelector('.connected-users');
+        if (connectedUsers) {
+            connectedUsers.textContent = `Connected Users: ${data.connected_users || 0}`;
+        }
+        
+        // Update account balance
+        const accountBalance = document.querySelector('.account-balance');
+        if (accountBalance) {
+            accountBalance.textContent = `Balance: ${data.account_balance || '0.00'} USDT`;
+        }
+        
+        // Update daily trades
+        const dailyTrades = document.querySelector('.daily-trades');
+        if (dailyTrades) {
+            dailyTrades.textContent = `Daily Trades: ${data.daily_trades || 0}`;
+        }
+        
+        // Update testnet indicator
+        const testnetIndicator = document.querySelector('.testnet-indicator');
+        if (testnetIndicator) {
+            testnetIndicator.style.display = data.testnet ? 'block' : 'none';
         }
     }
 }
