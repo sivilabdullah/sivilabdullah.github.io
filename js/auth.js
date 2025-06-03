@@ -1,4 +1,4 @@
-// Authentication demo handler (for static site demo purposes)
+// Authentication API (backend integration for cross-browser compatibility)
 class AuthAPI {
     constructor() {
         // Production mode with Railway backend
@@ -7,125 +7,134 @@ class AuthAPI {
         this.token = localStorage.getItem('token');
     }
 
-    // Generate demo token
-    generateToken() {
-        return 'demo_token_' + Math.random().toString(36).substr(2, 9);
-    }
-
-    // Register user (demo mode)
+    // Register user (backend integration)
     async register(email, password, name) {
         try {
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 800));
+            // Call backend registration endpoint
+            const response = await fetch(`${this.botApiUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    name: name
+                })
+            });
 
-            // Check if user already exists
-            const existingUsers = JSON.parse(localStorage.getItem('demo_users') || '{}');
-            if (existingUsers[email]) {
-                return { success: false, message: 'User already exists with this email' };
+            const result = await response.json();
+            
+            if (!response.ok) {
+                return { success: false, message: result.message || 'Registration failed' };
             }
 
-            // Create new user
-            const newUser = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                password: password, // In real app, this would be hashed
-                createdAt: new Date().toISOString()
-            };
+            if (result.success) {
+                // Save token and user data
+                this.token = result.data.token;
+                localStorage.setItem('token', this.token);
+                localStorage.setItem('user', JSON.stringify(result.data.user));
 
-            // Save user to localStorage
-            existingUsers[email] = newUser;
-            localStorage.setItem('demo_users', JSON.stringify(existingUsers));
-
-            // Generate token and save
-            this.token = this.generateToken();
-            localStorage.setItem('token', this.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: newUser.id,
-                name: newUser.name,
-                email: newUser.email
-            }));
-
-            return { 
-                success: true, 
-                data: { 
-                    user: { id: newUser.id, name: newUser.name, email: newUser.email },
-                    token: this.token 
-                } 
-            };
+                return { 
+                    success: true, 
+                    data: result.data
+                };
+            } else {
+                return { success: false, message: result.message };
+            }
         } catch (error) {
             console.error('Register error:', error);
-            return { success: false, message: 'Registration failed. Please try again.' };
+            return { success: false, message: 'Network error: Could not connect to server' };
         }
     }
 
-    // Login user (demo mode)
+    // Login user (backend integration)
     async login(email, password) {
         try {
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 800));
+            // Call backend login endpoint
+            const response = await fetch(`${this.botApiUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
 
-            // Check if user exists
-            const existingUsers = JSON.parse(localStorage.getItem('demo_users') || '{}');
-            const user = existingUsers[email];
-
-            if (!user) {
-                return { success: false, message: 'User not found. Please register first.' };
+            const result = await response.json();
+            
+            if (!response.ok) {
+                return { success: false, message: result.message || 'Login failed' };
             }
 
-            if (user.password !== password) {
-                return { success: false, message: 'Invalid password. Please try again.' };
+            if (result.success) {
+                // Save token and user data
+                this.token = result.data.token;
+                localStorage.setItem('token', this.token);
+                localStorage.setItem('user', JSON.stringify(result.data.user));
+
+                return { 
+                    success: true, 
+                    data: result.data
+                };
+            } else {
+                return { success: false, message: result.message };
             }
-
-            // Generate token and save
-            this.token = this.generateToken();
-            localStorage.setItem('token', this.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: user.id,
-                name: user.name,
-                email: user.email
-            }));
-
-            return { 
-                success: true, 
-                data: { 
-                    user: { id: user.id, name: user.name, email: user.email },
-                    token: this.token 
-                } 
-            };
         } catch (error) {
             console.error('Login error:', error);
-            return { success: false, message: 'Login failed. Please try again.' };
+            return { success: false, message: 'Network error: Could not connect to server' };
         }
     }
 
-    // Get user profile (demo mode)
+    // Get user profile (backend integration)
     async getProfile() {
         try {
-            const user = this.getCurrentUser();
-            if (!user) {
-                return { success: false, message: 'User not found' };
+            if (!this.token) {
+                return { success: false, message: 'No token found' };
             }
 
-            return { success: true, data: user };
+            const response = await fetch(`${this.botApiUrl}/api/auth/profile`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result = await response.json();
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Token is invalid, clear it
+                    this.logout();
+                }
+                return { success: false, message: result.message || 'Failed to get profile' };
+            }
+
+            if (result.success) {
+                // Update local user data
+                localStorage.setItem('user', JSON.stringify(result.data));
+                return { success: true, data: result.data };
+            } else {
+                return { success: false, message: result.message };
+            }
         } catch (error) {
             console.error('Profile error:', error);
-            return { success: false, message: 'Failed to get profile' };
+            return { success: false, message: 'Network error: Could not connect to server' };
         }
     }
 
-    // Get API keys (demo mode)
+    // Get API keys (keep existing functionality)
     async getAPIKeys() {
         try {
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 300));
-
             const user = this.getCurrentUser();
             if (!user) {
                 return { success: false, message: 'User not logged in' };
             }
 
-            // Get API keys from localStorage
+            // Get API keys from localStorage (this can stay local for demo)
             const apiKeys = localStorage.getItem('demo_api_keys');
             if (apiKeys) {
                 const keys = JSON.parse(apiKeys);
@@ -154,7 +163,7 @@ class AuthAPI {
         return apiKey.substring(0, 8) + '••••••••••••••••';
     }
 
-    // Save API keys (REAL backend integration)
+    // Save API keys (keep existing backend integration)
     async saveAPIKeys(apiKey, secretKey) {
         try {
             const user = this.getCurrentUser();
@@ -212,7 +221,7 @@ class AuthAPI {
         }
     }
 
-    // Validate Binance API key format
+    // Validate Binance API key format (keep existing)
     validateBinanceAPIKey(apiKey, secretKey) {
         // Updated validation for modern Binance API key formats
         
@@ -252,13 +261,7 @@ class AuthAPI {
         return modernApiKeyPattern.test(apiKey) && modernSecretPattern.test(secretKey);
     }
 
-    // Connect to bot (simulate API call to your bot)
-    async connectToBot(apiKey, secretKey) {
-        // This method is now integrated into saveAPIKeys
-        return { success: true };
-    }
-
-    // Start/Stop bot methods - REAL backend integration
+    // Start/Stop bot methods (keep existing backend integration)
     async startBot() {
         try {
             const user = this.getCurrentUser();
@@ -351,6 +354,8 @@ class AuthAPI {
         this.token = null;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('demo_api_keys');
+        localStorage.removeItem('bot_status');
         window.location.href = 'index.html';
     }
 
@@ -397,34 +402,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = this.querySelector('input[type="email"]').value;
             const password = this.querySelector('input[type="password"]').value;
             const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
             
-            if (!email || !password) {
-                showMessage('Please fill in all fields', 'error');
-                return;
-            }
-            
-            // Disable button
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Signing In...';
+            submitBtn.textContent = 'Logging in...';
             
             try {
                 const result = await authAPI.login(email, password);
                 
                 if (result.success) {
-                    showMessage('Login successful! Redirecting to dashboard...', 'success');
+                    showMessage('✅ Login successful! Redirecting...', 'success');
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
-                    }, 1500);
+                    }, 1000);
                 } else {
-                    showMessage(result.message, 'error');
+                    showMessage('❌ ' + result.message, 'error');
                 }
             } catch (error) {
-                showMessage('An error occurred. Please try again.', 'error');
+                showMessage('❌ Login failed. Please try again.', 'error');
             }
             
-            // Re-enable button
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Sign In';
+            submitBtn.textContent = originalText;
         });
     }
     
@@ -434,58 +433,32 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const name = this.querySelector('input[name="name"]')?.value || '';
+            const name = this.querySelector('input[name="name"]').value;
             const email = this.querySelector('input[type="email"]').value;
-            const password = this.querySelector('input[name="password"]').value;
-            const confirmPassword = this.querySelector('input[name="confirm-password"]')?.value;
-            const termsChecked = this.querySelector('input[name="terms"]')?.checked;
+            const password = this.querySelector('input[type="password"]').value;
             const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
             
-            // Validation
-            if (!name || !email || !password) {
-                showMessage('Please fill in all fields', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters long', 'error');
-                return;
-            }
-            
-            // Password confirmation check
-            if (confirmPassword && password !== confirmPassword) {
-                showMessage('Passwords do not match', 'error');
-                return;
-            }
-            
-            // Terms check
-            if (termsChecked !== undefined && !termsChecked) {
-                showMessage('Please accept the Terms of Service', 'error');
-                return;
-            }
-            
-            // Disable button
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating Account...';
+            submitBtn.textContent = 'Creating account...';
             
             try {
                 const result = await authAPI.register(email, password, name);
                 
                 if (result.success) {
-                    showMessage('Account created successfully! Redirecting to dashboard...', 'success');
+                    showMessage('✅ Account created successfully! Redirecting...', 'success');
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
-                    }, 1500);
+                    }, 1000);
                 } else {
-                    showMessage(result.message, 'error');
+                    showMessage('❌ ' + result.message, 'error');
                 }
             } catch (error) {
-                showMessage('An error occurred. Please try again.', 'error');
+                showMessage('❌ Registration failed. Please try again.', 'error');
             }
             
-            // Re-enable button
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Account';
+            submitBtn.textContent = originalText;
         });
     }
     
